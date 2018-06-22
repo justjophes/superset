@@ -192,8 +192,6 @@ def load_world_bank_health_n_pop():
         "limit": "25",
         "granularity_sqla": "year",
         "groupby": [],
-        "metric": 'sum__SP_POP_TOTL',
-        "metrics": ["sum__SP_POP_TOTL"],
         "row_limit": config.get("ROW_LIMIT"),
         "since": "2014-01-01",
         "until": "2014-01-02",
@@ -201,7 +199,6 @@ def load_world_bank_health_n_pop():
         "where": "",
         "markup_type": "markdown",
         "country_fieldtype": "cca3",
-        "secondary_metric": "sum__SP_POP_TOTL",
         "entity": "country_code",
         "show_bubbles": True,
     }
@@ -285,7 +282,8 @@ def load_world_bank_health_n_pop():
                         "TUV", "IMY", "KNA", "ASM", "ADO", "AMA", "PLW",
                     ],
                     "op": "not in"}],
-                )),
+            ),
+        ),
         Slice(
             slice_name="Rural Breakdown",
             viz_type='sunburst',
@@ -605,9 +603,6 @@ def load_birth_names():
         "limit": "25",
         "granularity_sqla": "ds",
         "groupby": [],
-        "metric": 'sum__num',
-        "metrics": ["sum__num"],
-        "row_limit": config.get("ROW_LIMIT"),
         "since": "100 years ago",
         "until": "now",
         "viz_type": "table",
@@ -616,6 +611,20 @@ def load_birth_names():
     }
 
     print("Creating some slices")
+    default_metric = {
+        'expressionType': 'SIMPLE',
+        'column': {
+            'column_name': 'num',
+            'expression': '',
+            'type': 'BIGINT(20)',
+            'optionName': '_col_num',
+        },
+        'aggregate': 'SUM',
+        'hasCustomLabel': True,
+        'fromFormData': True,
+        'label': 'Babies',
+        'optionName': 'metric_2348',
+    }
     slices = [
         Slice(
             slice_name="Girls",
@@ -624,6 +633,7 @@ def load_birth_names():
             datasource_id=tbl.id,
             params=get_slice_json(
                 defaults,
+                metrics=[default_metric],
                 groupby=['name'],
                 filters=[{
                     'col': 'gender',
@@ -640,6 +650,7 @@ def load_birth_names():
             params=get_slice_json(
                 defaults,
                 groupby=['name'],
+                metrics=[default_metric],
                 filters=[{
                     'col': 'gender',
                     'op': 'in',
@@ -653,6 +664,7 @@ def load_birth_names():
             datasource_id=tbl.id,
             params=get_slice_json(
                 defaults,
+                metric=default_metric,
                 viz_type="big_number", granularity_sqla="ds",
                 compare_lag="5", compare_suffix="over 5Y")),
         Slice(
@@ -662,6 +674,7 @@ def load_birth_names():
             datasource_id=tbl.id,
             params=get_slice_json(
                 defaults,
+                metrics=[default_metric],
                 viz_type="pie", groupby=['gender'])),
         Slice(
             slice_name="Genders by State",
@@ -675,8 +688,38 @@ def load_birth_names():
                     'op': 'not in',
                     'val': ['other'],
                 }],
-                viz_type="dist_bar",
-                metrics=['sum__sum_girls', 'sum__sum_boys'],
+                viz_type='dist_bar',
+                metrics=[
+                    {
+                        'expressionType': 'SIMPLE',
+                        'column': {
+                            'column_name': 'sum_girls',
+                            'expression': '',
+                            'type': 'BIGINT(20)',
+                            'optionName': '_col_sum_girls',
+                        },
+                        'aggregate': 'SUM',
+                        'sqlExpression': None,
+                        'hasCustomLabel': True,
+                        'fromFormData': True,
+                        'label': 'Girls',
+                        'optionName': 'metric_222',
+                    }, {
+                        'expressionType': 'SIMPLE',
+                        'column': {
+                            'column_name': 'sum_boys',
+                            'expression': '',
+                            'type': 'BIGINT(20)',
+                            'optionName': '_col_sum_boys',
+                        },
+                        'aggregate': 'SUM',
+                        'sqlExpression': None,
+                        'hasCustomLabel': True,
+                        'fromFormData': True,
+                        'label': 'Boys',
+                        'optionName': 'metric_111',
+                    },
+                ],
                 groupby=['state'])),
         Slice(
             slice_name="Trends",
@@ -685,6 +728,7 @@ def load_birth_names():
             datasource_id=tbl.id,
             params=get_slice_json(
                 defaults,
+                metrics=[default_metric],
                 viz_type="line", groupby=['name'],
                 granularity_sqla='ds', rich_tooltip=True, show_legend=True)),
         Slice(
@@ -694,7 +738,7 @@ def load_birth_names():
             datasource_id=tbl.id,
             params=get_slice_json(
                 defaults,
-                viz_type="dual_line", metric='avg__num', metric_2='sum__num',
+                viz_type="dual_line", metric='avg__num', metric_2=default_metric,
                 granularity_sqla='ds')),
         Slice(
             slice_name="Title",
@@ -903,9 +947,7 @@ def load_birth_names():
         "col": 1,
         "row": 48
       }
-    ]
-
-        """)
+    ]""")
     l = json.loads(js)
     for i, pos in enumerate(l):
         pos['slice_id'] = str(slices[i].id)
