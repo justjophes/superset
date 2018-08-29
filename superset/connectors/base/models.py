@@ -101,10 +101,6 @@ class BaseDatasource(AuditMixinNullable, ImportMixin):
         return None
 
     @property
-    def groupby_column_names(self):
-        return sorted([c.column_name for c in self.columns if c.groupby])
-
-    @property
     def filterable_column_names(self):
         return sorted([c.column_name for c in self.columns if c.filterable])
 
@@ -137,14 +133,6 @@ class BaseDatasource(AuditMixinNullable, ImportMixin):
             if metric.metric_name not in exisiting_metrics:
                 metric.table_id = self.id
                 self.metrics += [metric]
-
-    @property
-    def metrics_combo(self):
-        return sorted(
-            [
-                (m.metric_name, m.verbose_name or m.metric_name or '')
-                for m in self.metrics],
-            key=lambda x: x[1])
 
     @property
     def short_data(self):
@@ -198,18 +186,16 @@ class BaseDatasource(AuditMixinNullable, ImportMixin):
             'cache_timeout': self.cache_timeout,
             'params': self.params,
             'perm': self.perm,
+            'edit_url': self.url,
 
             # sqla-specific
             'sql': self.sql,
 
-            # computed fields
-            'all_cols': utils.choicify(self.column_names),
+            # one to many
             'columns': [o.data for o in self.columns],
-            'edit_url': self.url,
-            'filterable_cols': utils.choicify(self.filterable_column_names),
-            'gb_cols': utils.choicify(self.groupby_column_names),
             'metrics': [o.data for o in self.metrics],
-            'metrics_combo': self.metrics_combo,
+
+            # TODO deprecate, move logic to JS
             'order_by_choices': order_by_choices,
             'owner': self.owner.id if self.owner else None,
             'verbose_map': verbose_map,

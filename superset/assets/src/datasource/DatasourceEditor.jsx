@@ -414,7 +414,11 @@ export class DatasourceEditor extends React.PureComponent {
             name: (d, onChange) => (
               <EditableTitle canEdit title={d} onSaveTitle={onChange} />),
             config: (v, onChange) => (
-              <SpatialControl value={v} onChange={onChange} choices={datasource.all_cols} />
+              <SpatialControl
+                value={v}
+                onChange={onChange}
+                choices={datasource.columns.map(col => col.column_name)}
+              />
             ),
           }}
         />
