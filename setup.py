@@ -95,7 +95,6 @@ setup(
         'thrift>=0.9.3',
         'thrift-sasl>=0.2.1',
         'unicodecsv',
-        'unidecode>=0.04.21',
     ],
     extras_require={
         'cors': ['flask-cors>=2.0.0'],
@@ -112,5 +111,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'License :: OSI Approved :: Apache Software License',
     ],
+    license='Apache License 2.0',
 )
