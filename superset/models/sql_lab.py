@@ -17,7 +17,10 @@ from superset.utils.core import QueryStatus, user_label
 
 
 class Query(Model):
-    """ORM model for SQL query"""
+    """ORM model for SQL query
+
+    Now that SQL Lab support multi-statement execution, an entry in this
+    table may represent multiple SQL statements executed sequentially"""
 
     __tablename__ = 'query'
     id = Column(Integer, primary_key=True)

@@ -39,7 +39,7 @@ from superset.legacy import cast_form_data, update_time_range
 import superset.models.core as models
 from superset.models.sql_lab import Query
 from superset.models.user_attributes import UserAttribute
-from superset.sql_parse import SupersetQuery
+from superset.sql_parse import ParsedQuery
 from superset.utils import core as utils
 from superset.utils import dashboard_import_export
 from .base import (
@@ -2292,7 +2292,7 @@ class Superset(BaseSupersetView):
         table.schema = data.get('schema')
         table.template_params = data.get('templateParams')
         table.is_sqllab_view = True
-        q = SupersetQuery(data.get('sql'))
+        q = ParsedQuery(data.get('sql'))
         table.sql = q.stripped()
         db.session.add(table)
         cols = []

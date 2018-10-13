@@ -1,6 +1,7 @@
 # pylint: disable=C,R,W
 """Utility functions used across Superset"""
 from builtins import object
+from contextlib import contextmanager
 from datetime import date, datetime, time, timedelta
 import decimal
 from email.mime.application import MIMEApplication
@@ -1023,3 +1024,12 @@ def MediumText():
 
 def shortid():
     return '{}'.format(uuid.uuid4())[-12:]
+
+
+@contextmanager
+def timing(stats_key):
+    try:
+        print('YIELDING')
+        yield 'TEST'
+    finally:
+        stats_logger.timting(10)

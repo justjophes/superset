@@ -10,7 +10,7 @@ from past.builtins import basestring
 from superset import app, db
 from superset.models.helpers import QueryStatus
 from superset.models.sql_lab import Query
-from superset.sql_parse import SupersetQuery
+from superset.sql_parse import ParsedQuery
 from superset.utils.core import get_main_database
 from .base_tests import SupersetTestCase
 
@@ -33,7 +33,7 @@ class UtilityFunctionTests(SupersetTestCase):
 
     # TODO(bkyryliuk): support more cases in CTA function.
     def test_create_table_as(self):
-        q = SupersetQuery('SELECT * FROM outer_space;')
+        q = ParsedQuery('SELECT * FROM outer_space;')
 
         self.assertEqual(
             'CREATE TABLE tmp AS \nSELECT * FROM outer_space',
@@ -45,7 +45,7 @@ class UtilityFunctionTests(SupersetTestCase):
             q.as_create_table('tmp', overwrite=True))
 
         # now without a semicolon
-        q = SupersetQuery('SELECT * FROM outer_space')
+        q = ParsedQuery('SELECT * FROM outer_space')
         self.assertEqual(
             'CREATE TABLE tmp AS \nSELECT * FROM outer_space',
             q.as_create_table('tmp'))
@@ -54,7 +54,7 @@ class UtilityFunctionTests(SupersetTestCase):
         multi_line_query = (
             'SELECT * FROM planets WHERE\n'
             "Luke_Father = 'Darth Vader'")
-        q = SupersetQuery(multi_line_query)
+        q = ParsedQuery(multi_line_query)
         self.assertEqual(
             'CREATE TABLE tmp AS \nSELECT * FROM planets WHERE\n'
             "Luke_Father = 'Darth Vader'",
