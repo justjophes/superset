@@ -1,6 +1,7 @@
 # pylint: disable=C,R,W
 """A collection of ORM sqlalchemy models for SQL Lab"""
 from datetime import datetime
+import json
 import re
 
 from flask import Markup
@@ -12,11 +13,11 @@ from sqlalchemy import (
 from sqlalchemy.orm import backref, relationship
 
 from superset import security_manager
-from superset.models.helpers import AuditMixinNullable
+from superset.models.helpers import AuditMixinNullable, ExtraJSONMixin
 from superset.utils.core import QueryStatus, user_label
 
 
-class Query(Model):
+class Query(Model, ExtraJSONMixin):
     """ORM model for SQL query
 
     Now that SQL Lab support multi-statement execution, an entry in this

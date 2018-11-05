@@ -305,3 +305,14 @@ class QueryResult(object):
         self.duration = duration
         self.status = status
         self.error_message = error_message
+
+
+class ExtraJSONMixin:
+    extra_json = sa.Column(sa.Text)
+
+    @property
+    def extra(self):
+        return json.loads(self.extra_json)
+
+    def set_extra_json(self, d):
+        self.extra_json = json.dumps(d)
